@@ -30,9 +30,13 @@ namespace MagicLeap
 
         public event Action<External3DModel> OnTransformChanged;
 
+        public event Action<External3DModel> OnShapeChangerDataChanged;
+
         public string FileName => _fileName;
 
         public TransformProto TransformProto => _transformProto;
+
+        public ShapeChangerProto ShapeChangerData => _shapeChangerData;
 
         public event Action OnDestroyed;
 
@@ -45,9 +49,17 @@ namespace MagicLeap
         private IEnumerator _delayLoadingCubeCoroutine;
         private bool _started;
 
+        private ShapeChangerProto _shapeChangerData;
+
         private const float MaxInitialModelDimension = 2.0f;
         private const float MinScaleFactor = 0.1f;
         private const float MaxScaleFactor = 5.0f;
+
+        public void SetShapeChangerData(ShapeChangerProto shapeChangerProto)
+        {
+            _shapeChangerData = shapeChangerProto;
+            OnShapeChangerDataChanged?.Invoke(this);
+        }
 
         public void Start()
         {

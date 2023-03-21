@@ -1025,8 +1025,16 @@ namespace MagicLeap.LeapBrush
             {
                 // Update the 3D model pose in the server.
                 _uploadThread.UpdateExternalModel(externalModel.Id,
-                    externalModel.AnchorId, externalModel.FileName, externalModel.TransformProto);
+                    externalModel.AnchorId, externalModel.FileName, externalModel.TransformProto,
+                    externalModel.ShapeChangerData);
             }
+        }
+
+        private void OnShapeChangerDataChanged(External3DModel externalModel)
+        {
+            _uploadThread.UpdateExternalModel(externalModel.Id,
+                externalModel.AnchorId, externalModel.FileName, externalModel.TransformProto,
+                externalModel.ShapeChangerData);
         }
 
         /// <summary>
@@ -1149,6 +1157,7 @@ namespace MagicLeap.LeapBrush
                 externalModel.Id = "M" + _random.Next(0, Int32.MaxValue);
                 externalModel.AnchorId = _headClosestAnchorId;
                 externalModel.OnTransformChanged += OnExternalModelTransformChanged;
+                externalModel.OnShapeChangerDataChanged += OnShapeChangerDataChanged;
 
                 _externalModelMap[externalModel.Id] = externalModel;
                 externalModel.OnDestroyed += () => _externalModelMap.Remove(externalModel.Id);
@@ -1161,7 +1170,8 @@ namespace MagicLeap.LeapBrush
                 TransformExtensions.SetWorldPose(externalModel.transform, modelPose);
 
                 _uploadThread.UpdateExternalModel(externalModel.Id, externalModel.AnchorId,
-                    modelInfo.FileName, ProtoUtils.ToProto(externalModel.transform));
+                    modelInfo.FileName, ProtoUtils.ToProto(externalModel.transform),
+                    externalModel.ShapeChangerData);
             }
         }
 
@@ -1937,6 +1947,7 @@ namespace MagicLeap.LeapBrush
                 externalModel.Id = externalModelAdd.Model.Id;
                 externalModel.AnchorId = externalModelAdd.Model.AnchorId;
                 externalModel.OnTransformChanged += OnExternalModelTransformChanged;
+                externalModel.OnShapeChangerDataChanged += OnShapeChangerDataChanged;
 
                 _externalModelMap[externalModel.Id] = externalModel;
                 externalModel.OnDestroyed += () => _externalModelMap.Remove(externalModel.Id);
